@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+
+    <meta
+      name="description"
+      content="Tuntas membantu mengatur prioritas, menjaga fokus, dan melanjutkan pekerjaan."
+    />
+
+    <title>Tuntas — Kelola Tugasmu</title>
+
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="./assets/Icon/tuntas-icon-light.svg"
+      media="(prefers-color-scheme: light)"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="./assets/Icon/tuntas-icon-dark.svg"
+      media="(prefers-color-scheme: dark)"
+    />
+    <script src="./js/app.js"></script>
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Sidebar">
+        <a
+          class="brand"
+          href="#beranda"
+          aria-label="Tuntas — kembali ke Beranda"
+        >
+          <picture>
+            <source
+              media="(min-width: 640px) and (max-width: 1023px)"
+              srcset="./assets/Icon/tuntas-icon-light.svg"
+              width="128"
+              height="128"
+            />
+            <img
+              src="./assets/Icon/tuntas-wordmark-light.svg"
+              alt="Tuntas"
+              width="449"
+              height="128"
+            />
+          </picture>
+        </a>
+
+        <nav class="sidebar-nav" aria-label="Navigasi utama">
+          <a class="nav-link" href="#beranda" data-icon="home"
+            ><span class="nav-label">Beranda</span></a
+          >
+
+          <a class="nav-link" href="#tugas" data-icon="tasks"
+            ><span class="nav-label">Tugas</span></a
+          >
+
+          <a class="nav-link" href="#fokus" data-icon="focus"
+            ><span class="nav-label">Fokus</span></a
+          >
+
+          <a class="nav-link" href="#akses-cepat" data-icon="links"
+            ><span class="nav-label">Akses cepat</span></a
+          >
+        </nav>
+
+        <p class="sidebar-caption">
+          Satu per satu,<br />
+          sampai tuntas.
+        </p>
+      </aside>
+
+      <main class="main-content" id="main-content">
+        <div class="mobile-header" id="mobile-header" hidden></div>
+        <header class="page-header">
+          <div>
+            <p class="eyebrow">RUANG PRODUKTIVITAS PRIBADI</p>
+            <div class="greeting-row">
+              <h1 id="greeting">Selamat datang.</h1>
+            </div>
+            <p>Atur prioritas. Selesaikan satu per satu.</p>
+          </div>
+
+          <div class="header-actions">
+            <div class="date-time" aria-label="Waktu lokal perangkat">
+              <time id="current-time">--:--</time>
+              <time id="current-date">Tanggal hari ini</time>
+            </div>
+
+            <div class="header-tools" id="header-tools">
+              <button
+                class="button button-secondary icon-button"
+                id="guide-open"
+                type="button"
+                aria-label="Panduan"
+              ></button>
+              <button
+                class="button button-secondary icon-button"
+                id="name-edit"
+                type="button"
+                aria-label="Ubah nama"
+              ></button>
+              <button
+                class="button button-secondary icon-button"
+                id="theme-toggle"
+                type="button"
+                aria-pressed="false"
+              >
+                Mode gelap
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <section
+          class="app-view home-view"
+          data-view="beranda"
+          aria-labelledby="home-heading"
+        >
+          <h2 id="home-heading" tabindex="-1">Beranda</h2>
+          <div class="home-grid">
+            <section
+              class="panel summary-panel"
+              aria-labelledby="summary-heading"
+            >
+              <h3 id="summary-heading">Ringkasan tugas</h3>
+              <dl class="task-summary">
+                <div>
+                  <dt>Belum dimulai</dt>
+                  <dd id="not-started-count">0</dd>
+                </div>
+                <div>
+                  <dt>Sedang dikerjakan</dt>
+                  <dd id="in-progress-count">0</dd>
+                </div>
+                <div>
+                  <dt>Selesai</dt>
+                  <dd id="completed-task-count">0</dd>
+                </div>
+              </dl>
+              <div class="home-actions">
+                <a class="button button-primary" href="#tugas">Kelola tugas</a>
+                <a class="button button-secondary" href="#fokus">Buka fokus</a>
+              </div>
+            </section>
+            <section
+              class="suggestion-card"
+              aria-labelledby="suggestion-heading"
+            >
+              <div class="suggestion-content">
+                <p class="eyebrow">SARAN BERIKUTNYA</p>
+
+                <h3 id="suggestion-heading">Mulai dari tugas pertamamu</h3>
+
+                <p id="suggestion-reason">
+                  Tambahkan tugas untuk mendapatkan saran berdasarkan prioritas.
+                </p>
+              </div>
+
+              <button
+                class="button button-primary suggestion-action"
+                id="suggestion-button"
+                type="button"
+                hidden
+              >
+                Kerjakan
+                <span aria-hidden="true">↗</span>
+              </button>
+            </section>
+          </div>
+        </section>
+
+        <section
+          class="panel tasks-panel app-view"
+          data-view="tugas"
+          hidden
+          id="tasks-section"
+          aria-labelledby="tasks-heading"
+        >
+          <div class="section-header">
+            <h2 id="tasks-heading" tabindex="-1">Tugas saya</h2>
+            <p class="muted" id="task-count">0 dari 0 selesai</p>
+          </div>
+
+          <form class="task-form" id="task-form" novalidate>
+            <div class="form-field task-title-field">
+              <label for="task-title">Nama tugas</label>
+
+              <input
+                id="task-title"
+                name="title"
+                type="text"
+                placeholder="Apa yang ingin kamu selesaikan?"
+                maxlength="120"
+                aria-describedby="task-form-error"
+                required
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="task-priority">Prioritas</label>
+
+              <select id="task-priority" name="priority">
+                <option value="high">Tinggi</option>
+                <option value="medium" selected>Sedang</option>
+                <option value="low">Rendah</option>
+              </select>
+            </div>
+
+            <button class="button button-primary" type="submit">
+              Tambah tugas
+            </button>
+
+            <p class="form-error" id="task-form-error" role="alert"></p>
+          </form>
+
+          <p class="muted tasks-help">
+            Pilih tiket untuk melihat detail. Mulai fokus saat kamu siap
+            mengerjakannya.
+          </p>
+          <div class="tasks-workspace has-detail" id="tasks-workspace">
+            <div class="task-list-column">
+              <div class="task-toolbar">
+                <label for="task-sort">Urutkan tugas</label>
+
+                <select id="task-sort">
+                  <option value="priority">Prioritas</option>
+                  <option value="status">Status</option>
+                  <option value="newest">Terbaru</option>
+                  <option value="oldest">Terlama</option>
+                </select>
+              </div>
+
+              <div class="empty-state" id="tasks-empty">
+                <h3>Belum ada tugas</h3>
+                <p>Tambahkan satu hal yang ingin kamu selesaikan.</p>
+              </div>
+
+              <ul class="task-list" id="task-list"></ul>
+            </div>
+            <aside
+              class="task-detail"
+              id="task-detail"
+              aria-labelledby="detail-heading"
+            >
+              <div class="section-header">
+                <h3 id="detail-heading" tabindex="-1">Detail tugas</h3>
+                <button
+                  class="button button-secondary icon-button"
+                  id="detail-close"
+                  type="button"
+                  aria-label="Tutup detail tugas"
+                ></button>
+              </div>
+              <p class="muted" id="detail-empty">
+                Pilih tugas untuk melihat detail dan melanjutkan pekerjaan.
+              </p>
+              <div id="detail-content" hidden>
+                <div class="detail-title-row">
+                  <h4 id="detail-title"></h4>
+                  <div class="detail-tools">
+                    <button
+                      class="button button-secondary icon-button"
+                      id="detail-edit"
+                      type="button"
+                      aria-label="Edit tugas"
+                    ></button>
+                    <button
+                      class="button button-danger icon-button"
+                      id="detail-delete"
+                      type="button"
+                      aria-label="Hapus tugas"
+                    ></button>
+                  </div>
+                </div>
+                <p class="muted" id="detail-priority"></p>
+                <div class="form-field">
+                  <label for="detail-status">Status tugas</label>
+                  <select id="detail-status">
+                    <option value="not_started">Belum dimulai</option>
+                    <option value="in_progress">Sedang dikerjakan</option>
+                    <option value="completed">Selesai</option>
+                  </select>
+                </div>
+                <p class="muted" id="detail-session"></p>
+                <p class="form-error" id="detail-validation" role="alert"></p>
+                <div class="detail-actions">
+                  <button
+                    class="button button-primary"
+                    id="detail-focus"
+                    type="button"
+                  >
+                    Mulai fokus
+                  </button>
+                  <button
+                    class="button button-secondary"
+                    id="detail-complete"
+                    type="button"
+                  >
+                    Tandai selesai
+                  </button>
+                </div>
+                <div id="detail-note-slot"></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section
+          class="panel focus-panel app-view"
+          data-view="fokus"
+          hidden
+          id="focus-section"
+          aria-labelledby="focus-heading"
+        >
+          <p class="eyebrow">SATU TUGAS, SATU FOKUS</p>
+          <h2 id="focus-heading" tabindex="-1">Waktunya fokus</h2>
+
+          <p class="active-task" id="active-task-name">
+            Belum ada tugas dipilih
+          </p>
+          <p class="status-badge" id="focus-task-status" hidden></p>
+          <div class="focus-task-actions" id="focus-task-actions" hidden>
+            <button
+              class="button button-secondary"
+              id="focus-detail"
+              type="button"
+            >
+              Lihat detail tugas
+            </button>
+            <button
+              class="button button-secondary"
+              id="focus-complete"
+              type="button"
+            >
+              Tandai selesai
+            </button>
+          </div>
+
+          <div class="focus-task-prompt" id="focus-task-prompt">
+            <p class="muted">
+              Pilih tugas untuk menyimpan catatan, atau mulai timer mandiri.
+            </p>
+            <a class="button button-secondary" href="#tugas">Pilih tugas</a>
+          </div>
+
+          <div
+            class="timer-display"
+            id="timer-display"
+            role="timer"
+            aria-label="Sisa waktu fokus"
+          >
+            25:00
+          </div>
+
+          <p class="muted" id="timer-status" role="status">
+            Siap memulai sesi fokus.
+          </p>
+
+          <div class="timer-controls">
+            <button
+              class="button button-primary"
+              id="timer-start"
+              type="button"
+            >
+              Start
+            </button>
+
+            <button
+              class="button button-secondary"
+              id="timer-stop"
+              type="button"
+              disabled
+            >
+              Stop
+            </button>
+
+            <button
+              class="button button-secondary"
+              id="timer-reset"
+              type="button"
+            >
+              Reset
+            </button>
+          </div>
+
+          <form class="duration-form" id="duration-form" novalidate>
+            <fieldset>
+              <legend>Durasi Pomodoro</legend>
+              <div class="duration-fields">
+                <div class="form-field">
+                  <label for="duration-preset">Pilihan durasi</label>
+                  <select id="duration-preset">
+                    <option value="15">15 menit</option>
+                    <option value="25" selected>25 menit</option>
+                    <option value="45">45 menit</option>
+                    <option value="60">60 menit</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="duration-minutes">Durasi (menit)</label>
+                  <input
+                    id="duration-minutes"
+                    type="number"
+                    inputmode="numeric"
+                    min="1"
+                    max="180"
+                    step="1"
+                    value="25"
+                    required
+                    aria-describedby="duration-help duration-error"
+                  />
+                </div>
+                <button class="button button-secondary" type="submit">
+                  Terapkan durasi
+                </button>
+              </div>
+              <p class="muted" id="duration-help">
+                Pilih preset atau isi 1–180 menit, lalu terapkan.
+              </p>
+              <p class="form-error" id="duration-error" role="alert"></p>
+              <p class="muted" id="duration-summary" role="status"></p>
+            </fieldset>
+          </form>
+
+          <div id="focus-note-slot">
+            <form class="resume-form" id="resume-form">
+              <label for="resume-note">Catatan progres</label>
+
+              <p class="muted" id="resume-help">
+                Sudah sampai mana? Apa langkah berikutnya?
+              </p>
+
+              <textarea
+                id="resume-note"
+                name="resumeNote"
+                rows="4"
+                maxlength="2000"
+                placeholder="Contoh: Navbar selesai. Berikutnya, rapikan menu mobile."
+                aria-describedby="resume-help"
+                disabled
+              ></textarea>
+
+              <button
+                class="button button-secondary"
+                id="resume-save"
+                type="submit"
+                disabled
+              >
+                Simpan catatan
+              </button>
+
+              <p class="muted" id="resume-status" role="status"></p>
+            </form>
+          </div>
+        </section>
+
+        <section
+          class="panel links-panel app-view"
+          data-view="akses-cepat"
+          hidden
+          id="links-section"
+          aria-labelledby="links-heading"
+        >
+          <div class="section-header links-header">
+            <h2 id="links-heading" tabindex="-1">Akses cepat</h2>
+            <button
+              class="button button-secondary link-add-button"
+              id="link-add"
+              type="button"
+              aria-label="Tambah link"
+              data-tooltip="Tambah link"
+            >
+              <span aria-hidden="true">+</span>
+              <span class="link-add-label">Tambah link</span>
+            </button>
+          </div>
+          <p class="muted links-menu-help">
+            Menu tiga titik pada setiap link digunakan untuk mengedit atau
+            menghapusnya.
+          </p>
+          <div class="empty-state" id="links-empty">
+            <p>Simpan tautan yang sering kamu buka.</p>
+            <button
+              class="button button-secondary"
+              id="link-empty-add"
+              type="button"
+            >
+              Tambah link
+            </button>
+          </div>
+
+          <ul class="quick-links" id="quick-links"></ul>
+        </section>
+
+        <p class="app-status" id="app-status" role="status"></p>
+
+        <footer class="page-footer">
+          <small>Tuntas — satu langkah setiap hari.</small>
+        </footer>
+      </main>
+    </div>
+    <dialog
+      class="task-dialog link-dialog"
+      id="link-dialog"
+      aria-labelledby="link-dialog-heading"
+    >
+      <form class="link-form" id="link-form" novalidate>
+        <div class="section-header">
+          <h2 id="link-dialog-heading">Tambah link</h2>
+          <button
+            class="button button-secondary icon-button"
+            id="link-dialog-close"
+            type="button"
+            aria-label="Tutup dialog link"
+          ></button>
+        </div>
+        <div class="form-field">
+          <label for="link-label">Nama link</label>
+          <input
+            id="link-label"
+            name="label"
+            type="text"
+            placeholder="Contoh: GitHub"
+            maxlength="50"
+            required
+            aria-describedby="link-label-error"
+          />
+          <p class="form-error" id="link-label-error" role="alert"></p>
+        </div>
+        <div class="form-field">
+          <label for="link-url">URL</label>
+          <input
+            id="link-url"
+            name="url"
+            type="url"
+            placeholder="https://github.com"
+            required
+            aria-describedby="link-url-error"
+          />
+          <p class="form-error" id="link-url-error" role="alert"></p>
+        </div>
+        <p class="form-error" id="link-form-error" role="alert"></p>
+        <div class="dialog-actions">
+          <button
+            class="button button-secondary"
+            id="link-cancel"
+            type="button"
+          >
+            Batal
+          </button>
+          <button class="button button-primary" type="submit">Simpan</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog
+      id="guide-dialog"
+      class="guide-dialog"
+      aria-modal="true"
+      aria-labelledby="guide-heading"
+      aria-describedby="guide-description"
+    >
+      <div
+        id="guide-highlight"
+        class="guide-highlight"
+        aria-hidden="true"
+        hidden
+      ></div>
+      <section
+        id="guide-panel"
+        class="guide-panel"
+        aria-labelledby="guide-heading"
+      >
+        <div class="guide-header">
+          <p id="guide-counter" class="muted" hidden></p>
+          <button
+            id="guide-close"
+            class="button button-secondary icon-button"
+            type="button"
+            aria-label="Tutup panduan"
+          ></button>
+        </div>
+        <div class="guide-content" id="guide-content">
+          <h2 id="guide-heading" tabindex="-1">Selamat datang di Tuntas</h2>
+          <p id="guide-description">
+            Kenali cara mengatur tugas dan melanjutkan pekerjaan dalam beberapa
+            langkah singkat.
+          </p>
+          <p id="guide-fallback" class="muted" hidden>
+            Area ini belum tersedia. Kamu tetap dapat melanjutkan panduan.
+          </p>
+          <p id="guide-note" class="muted" hidden></p>
+        </div>
+        <div class="guide-actions">
+          <button id="guide-skip" class="button button-secondary" type="button">
+            Lewati
+          </button>
+          <button
+            id="guide-back"
+            class="button button-secondary"
+            type="button"
+            hidden
+          >
+            Sebelumnya
+          </button>
+          <button id="guide-next" class="button button-primary" type="button">
+            Mulai panduan
+          </button>
+        </div>
+      </section>
+    </dialog>
+    <dialog
+      class="detail-dialog"
+      id="detail-dialog"
+      aria-labelledby="detail-heading"
+    ></dialog>
+
+    <dialog
+      class="task-dialog"
+      id="name-dialog"
+      aria-labelledby="name-heading"
+      aria-describedby="name-help"
+    >
+      <form id="name-form" novalidate>
+        <h2 id="name-heading">Nama panggilan</h2>
+        <p class="muted" id="name-help">
+          Isi 1–30 karakter. Nama hanya disimpan di browser ini.
+        </p>
+        <div class="form-field">
+          <label for="nickname">Nama panggilan</label>
+          <input
+            id="nickname"
+            type="text"
+            maxlength="30"
+            required
+            autocomplete="nickname"
+            aria-describedby="name-error"
+          />
+        </div>
+        <p class="form-error" id="name-error" role="alert"></p>
+        <div class="dialog-actions">
+          <button
+            class="button button-secondary"
+            id="name-cancel"
+            type="button"
+          >
+            Batal
+          </button>
+          <button class="button button-primary" type="submit">Simpan</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog
+      class="task-dialog"
+      id="edit-task-dialog"
+      aria-labelledby="edit-task-heading"
+    >
+      <form id="edit-task-form" novalidate>
+        <div class="section-header">
+          <h2 id="edit-task-heading">Edit tugas</h2>
+          <button
+            class="button button-secondary icon-button"
+            id="edit-task-close"
+            type="button"
+            aria-label="Tutup editor tugas"
+          ></button>
+        </div>
+
+        <div class="form-field">
+          <label for="edit-task-title">Nama tugas</label>
+
+          <input
+            id="edit-task-title"
+            type="text"
+            maxlength="120"
+            aria-describedby="edit-task-error"
+            required
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="edit-task-priority">Prioritas</label>
+
+          <select id="edit-task-priority">
+            <option value="high">Tinggi</option>
+            <option value="medium">Sedang</option>
+            <option value="low">Rendah</option>
+          </select>
+        </div>
+
+        <p class="form-error" id="edit-task-error" role="alert"></p>
+
+        <div class="dialog-actions">
+          <button
+            class="button button-secondary"
+            id="edit-task-cancel"
+            type="button"
+          >
+            Batal
+          </button>
+
+          <button class="button button-primary" type="submit">
+            Simpan perubahan
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog
+      class="task-dialog"
+      id="choice-dialog"
+      aria-labelledby="choice-heading"
+      aria-describedby="choice-message"
+    >
+      <div>
+        <div class="section-header">
+          <h2 id="choice-heading">Konfirmasi</h2>
+          <button
+            class="button button-secondary icon-button"
+            id="choice-close"
+            type="button"
+            aria-label="Tutup konfirmasi"
+          ></button>
+        </div>
+        <p id="choice-message"></p>
+        <div class="dialog-actions" id="choice-actions"></div>
+      </div>
+    </dialog>
+  </body>
+</html>
